@@ -1,18 +1,40 @@
 // create a 2d array that represents a wordsearch based on a list of words.
 
-const wordsList: string[] = ["cat", "dog", "horse", "camel", "mouse", "rat"];
+const wordsList: string[] = ["cat", "dog", "horse", "camel", "mouse", "rat", "wolf", "bear", "chicken", "dinosaur"]
 
 class wordSearch {
-  public wordSearch: string[][];
+  private readonly wordSearch: string[][];
+  private readonly answerKey: string[][];
   private wordsList: string[];
   private wordSearchSize: number;
   private wordSearchWords: string[];
+  private alphabet: string[] = "abcdefghijklmnopqrstuvwxyz".toUpperCase().split("");
+
 
   constructor(wordsList: string[]) {
-    this.wordsList = wordsList;
-    this.wordSearchSize = this.wordsList.length * 2;
+    this.wordsList = wordsList.map((word) => word.toUpperCase());
+    this.wordSearchSize = this.calculateSize();
     this.wordSearch = this.createWordSearch();
     this.wordSearchWords = this.placeWords();
+    this.answerKey = this.setAnswerKey();
+    this.addRandomLetters();
+
+  }
+  private calculateSize(){
+    const wordsSum = wordsList.map(x => {
+      return Math.pow(x.length, 2)
+    }).reduce((a, b) => {
+      return a + b
+    }, 0)
+
+    return Math.ceil(Math.sqrt(wordsSum)) + 1
+  }
+
+  getWordSearch(): string[][] {
+    return this.wordSearch;
+  }
+  getAnswerKey(): string[][] {
+    return this.answerKey;
   }
 
   private createWordSearch(): string[][] {
@@ -208,8 +230,29 @@ class wordSearch {
     }
     return wordSearchWords;
   }
+
+  private setAnswerKey = (): string[][] => {
+    const answerKey = JSON.parse(JSON.stringify(this.wordSearch))
+    return answerKey;
+  }
+
+  private getRandomLetter() {
+    const randomNum = Math.floor(Math.random() * 26);
+    return this.alphabet[randomNum];
+  }
+
+  private addRandomLetters() {
+    for(let i = 0; i < this.wordSearch.length; i++){
+      for(let j = 0; j < this.wordSearch[i].length; j++){
+        if(this.wordSearch[i][j] === ' '){
+          this.wordSearch[i][j] = this.getRandomLetter();
+        }
+      }
+    }
+  }
 }
 
-const testWordsearch = new wordSearch(wordsList);
+const testWordSearch = new wordSearch(wordsList);
 
-console.table(testWordsearch.wordSearch);
+console.table(testWordSearch.getAnswerKey())
+console.table(testWordSearch.getWordSearch())

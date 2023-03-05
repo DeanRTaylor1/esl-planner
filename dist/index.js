@@ -1,11 +1,32 @@
 "use strict";
-const wordsList = ["cat", "dog", "horse", "camel", "mouse", "rat"];
+const wordsList = ["cat", "dog", "horse", "camel", "mouse", "rat", "wolf", "bear", "chicken", "dinosaur"];
 class wordSearch {
     constructor(wordsList) {
-        this.wordsList = wordsList;
-        this.wordSearchSize = this.wordsList.length * 2;
+        this.alphabet = "abcdefghijklmnopqrstuvwxyz".toUpperCase().split("");
+        this.setAnswerKey = () => {
+            const answerKey = JSON.parse(JSON.stringify(this.wordSearch));
+            return answerKey;
+        };
+        this.wordsList = wordsList.map((word) => word.toUpperCase());
+        this.wordSearchSize = this.calculateSize();
         this.wordSearch = this.createWordSearch();
         this.wordSearchWords = this.placeWords();
+        this.answerKey = this.setAnswerKey();
+        this.addRandomLetters();
+    }
+    calculateSize() {
+        const wordsSum = wordsList.map(x => {
+            return Math.pow(x.length, 2);
+        }).reduce((a, b) => {
+            return a + b;
+        }, 0);
+        return Math.ceil(Math.sqrt(wordsSum)) + 1;
+    }
+    getWordSearch() {
+        return this.wordSearch;
+    }
+    getAnswerKey() {
+        return this.answerKey;
     }
     createWordSearch() {
         let wordSearch = [];
@@ -188,6 +209,20 @@ class wordSearch {
         }
         return wordSearchWords;
     }
+    getRandomLetter() {
+        const randomNum = Math.floor(Math.random() * 26);
+        return this.alphabet[randomNum];
+    }
+    addRandomLetters() {
+        for (let i = 0; i < this.wordSearch.length; i++) {
+            for (let j = 0; j < this.wordSearch[i].length; j++) {
+                if (this.wordSearch[i][j] === ' ') {
+                    this.wordSearch[i][j] = this.getRandomLetter();
+                }
+            }
+        }
+    }
 }
-const testWordsearch = new wordSearch(wordsList);
-console.table(testWordsearch.wordSearch);
+const testWordSearch = new wordSearch(wordsList);
+console.table(testWordSearch.getAnswerKey());
+console.table(testWordSearch.getWordSearch());
